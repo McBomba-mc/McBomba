@@ -1,0 +1,2 @@
+# McBomba
+Lietuviškas minecraft serveris
