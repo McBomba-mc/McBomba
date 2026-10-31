@@ -1,0 +1,554 @@
+<title>McBomba</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="McBomba – lietuviškas Minecraft serveris: play.mcbomba.lt">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: single dark look. Warm charcoal surfaces, one ember accent, rank metals used only on the rank cards.
+   Hero = headline + connection panel. Then modes, ranks, services, community, guide, team. */
+:root {
+  --bg: #0E1013; --bg2: #14171B; --surface: #1A1E23; --surface2: #222730; --line: #2C323B;
+  --ink: #EDEFF2; --mute: #9BA4B0; --ember: #FF5B1F; --on-ember: #14100D; --focus: #FFB020; --bad: #FF8A80; --ok: #6CCB8A;
+  --f-display: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  --f-body: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 124px; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 1.0625rem/1.6 var(--f-body); -webkit-font-smoothing: antialiased; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg2); }
+h1, h2, h3, h4 { font-family: var(--f-display); font-weight: 700; line-height: 1.05; margin: 0; text-wrap: balance; }
+p { margin: 0; }
+a { color: inherit; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+code { font-family: var(--f-mono); }
+[hidden] { display: none !important; }
+.wrap { max-width: 1160px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.mute { color: var(--mute); }
+
+/* header */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 50; background: var(--bg2); border-bottom: 1px solid var(--line); }
+.bar { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; padding-block: 10px; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font: 700 1.7rem var(--f-display); letter-spacing: .01em; }
+.nav { display: flex; gap: 2px; flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+.nav::-webkit-scrollbar { display: none; }
+.nav a { padding: 6px 12px; color: var(--mute); text-decoration: none; font-weight: 500; white-space: nowrap; border-radius: 4px; }
+.nav a:hover { color: var(--ink); background: var(--surface2); }
+.acts { display: flex; gap: 10px; margin-left: auto; }
+.count { background: var(--on-ember); color: var(--ember); min-width: 22px; padding: 0 6px; text-align: center; border-radius: 3px; font-weight: 700; font-size: .85rem; }
+.fuse { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; }
+.fuse i { display: block; height: 100%; width: 0; background: var(--ember); }
+@media (max-width: 860px) { .nav { order: 3; flex: 1 0 100%; } }
+
+/* buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 8px 20px; font: 600 1rem var(--f-body); text-decoration: none; background: var(--ember); color: var(--on-ember); border: 1px solid var(--ember); border-radius: 4px; transition: background .15s, border-color .15s; }
+.btn:hover { background: #FF7440; border-color: #FF7440; }
+.btn.ghost { background: transparent; color: var(--ink); border-color: #3A424D; }
+.btn.ghost:hover { background: var(--surface2); border-color: #4A5461; }
+.btn.sm { min-height: 38px; padding: 4px 14px; font-size: .95rem; }
+.btn.full { width: 100%; }
+.btn[disabled] { opacity: .5; pointer-events: none; }
+
+/* hero */
+.hero { background: radial-gradient(820px 460px at 88% -12%, rgba(255, 91, 31, .20), transparent 70%), linear-gradient(rgba(255, 255, 255, .035) 1px, transparent 1px) 0 0 / 56px 56px, var(--bg); border-bottom: 1px solid var(--line); }
+.hero-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 36px 56px; align-items: center; padding-block: clamp(40px, 7vw, 96px); }
+.hero-grid > * { min-width: 0; }
+.hero h1 { font-size: clamp(3rem, 8.5vw, 6rem); line-height: .95; margin-bottom: 20px; }
+.lead { font-size: 1.25rem; color: var(--mute); max-width: 46ch; margin-bottom: 28px; }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 22px; min-width: 0; }
+.panel h2 { font-size: 1.6rem; margin-bottom: 14px; }
+.panel dl { margin: 0; }
+.panel .r { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.panel dt { color: var(--mute); }
+.panel dd { margin: 0; font-weight: 500; text-align: right; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+.panel dd code { font-size: 1.05rem; font-weight: 600; }
+.ev { margin-top: 18px; }
+.ev h3 { font-size: 1.3rem; margin-bottom: 2px; }
+.cd { display: flex; gap: 8px; margin: 12px 0 8px; }
+.cd-t { flex: 1; padding: 8px 4px; text-align: center; background: var(--bg); border: 1px solid var(--line); border-radius: 4px; }
+.cd-t b { display: block; font: 700 1.8rem/1 var(--f-display); font-variant-numeric: tabular-nums; color: var(--ember); }
+.cd-t span { font-size: .8rem; color: var(--mute); }
+.cd-done { font: 700 1.4rem var(--f-display); padding: 10px 0; }
+@media (max-width: 860px) { .hero-grid { grid-template-columns: 1fr; } }
+
+/* sections */
+.sec { padding-block: clamp(52px, 7vw, 92px); }
+.sec.alt { background: var(--bg2); border-block: 1px solid var(--line); }
+.h2 { font-size: clamp(2.2rem, 5vw, 3.4rem); margin-bottom: 10px; }
+.h3 { font-size: 2rem; margin: 56px 0 8px; }
+.sub { color: var(--mute); max-width: 62ch; margin-bottom: 30px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.cm { font: 500 .88rem var(--f-mono); padding: 4px 10px; background: var(--bg); color: var(--ink); border: 1px solid var(--line); border-radius: 3px; }
+.cm:hover { border-color: var(--ember); color: var(--ember); }
+
+/* modes */
+.modes { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); }
+.mode { display: flex; flex-direction: column; gap: 12px; }
+.mode h3 { font-size: 2rem; }
+.mode p { color: var(--mute); flex: 1; }
+
+/* ranks */
+.ranks { display: grid; gap: 16px; grid-template-columns: 1fr; }
+@media (min-width: 600px) { .ranks { grid-template-columns: 1fr 1fr; } .ranks > :last-child { grid-column: 1 / -1; } }
+@media (min-width: 1000px) { .ranks { grid-template-columns: repeat(5, 1fr); } .ranks > :last-child { grid-column: auto; } }
+.rank { display: flex; flex-direction: column; gap: 14px; padding: 22px 20px; }
+.rank .tier { display: flex; align-items: center; gap: 8px; font-size: .9rem; font-weight: 600; color: var(--tc); }
+.rank .tier i { width: 10px; height: 10px; background: var(--tc); display: block; }
+.rank h3 { font-size: 2.2rem; }
+.price { font: 700 1.9rem/1 var(--f-display); }
+.price small { display: block; margin-top: 4px; font: 400 .9rem var(--f-body); color: var(--mute); }
+.perks { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; flex: 1; font-size: .98rem; }
+.perks li { display: flex; gap: 10px; align-items: flex-start; }
+.perks li::before { content: ""; flex: none; width: 6px; height: 6px; margin-top: 10px; background: var(--tc); }
+.how { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); list-style: none; padding: 0; margin: 36px 0 0; counter-reset: h; }
+.how li { counter-increment: h; display: flex; gap: 12px; align-items: flex-start; }
+.how li::before { content: counter(h); flex: none; width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid var(--ember); color: var(--ember); border-radius: 4px; font: 700 1.2rem var(--f-display); }
+.how b { display: block; }
+
+/* services */
+.svc-list { padding: 0; }
+.svc { display: grid; grid-template-columns: 1fr auto auto; gap: 8px 24px; align-items: center; padding: 18px 22px; border-bottom: 1px solid var(--line); }
+.svc:last-child { border: 0; }
+.svc h3 { font-size: 1.5rem; margin-bottom: 2px; }
+.svc p { color: var(--mute); font-size: .98rem; }
+.svc .price { font-size: 1.5rem; text-align: right; white-space: nowrap; }
+@media (max-width: 640px) { .svc { grid-template-columns: 1fr auto; } .svc .btn { grid-column: 1 / -1; } }
+.packs { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+.pack { display: flex; flex-direction: column; gap: 10px; }
+.pack h4 { font-size: 1.5rem; }
+.pack p { color: var(--mute); font-size: .95rem; flex: 1; }
+.pack .cu { display: flex; gap: 8px; }
+.in { width: 100%; min-width: 0; padding: 10px 12px; font: inherit; color: var(--ink); background: var(--bg); border: 1px solid #3A424D; border-radius: 4px; }
+.in:focus { border-color: var(--ember); outline: 0; }
+
+/* community */
+.news { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-bottom: 24px; }
+.nw { display: flex; flex-direction: column; gap: 8px; }
+.nw time { font: 500 .85rem var(--f-mono); color: var(--mute); }
+.nw h3 { font-size: 1.5rem; }
+.nw p { color: var(--mute); }
+.discord { display: flex; flex-wrap: wrap; gap: 18px 30px; align-items: center; justify-content: space-between; padding: clamp(22px, 4vw, 36px); background: var(--surface2); border: 1px solid var(--line); border-radius: 6px; }
+.discord h3 { font-size: clamp(1.7rem, 4vw, 2.2rem); margin-bottom: 6px; }
+.discord p { color: var(--mute); max-width: 50ch; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; }
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.tab { min-height: 40px; padding: 4px 18px; font-weight: 500; background: transparent; border: 1px solid #3A424D; border-radius: 4px; }
+.tab[aria-pressed="true"] { background: var(--ember); border-color: var(--ember); color: var(--on-ember); font-weight: 600; }
+.demo { font-size: .9rem; color: var(--mute); margin-bottom: 16px; }
+.top-row { display: flex; align-items: center; gap: 16px; padding: 12px 20px; border-bottom: 1px solid var(--line); }
+.top-row:last-child { border: 0; }
+.top-row .no { width: 30px; font: 700 1.4rem var(--f-display); color: var(--mute); }
+.top-row:nth-child(-n+3) .no { color: var(--ember); }
+.top-row b { flex: 1; min-width: 0; overflow-wrap: anywhere; font-weight: 600; }
+.top-row .val { font: 700 1.25rem var(--f-display); font-variant-numeric: tabular-nums; }
+.top-row .val small { font: 400 .9rem var(--f-body); color: var(--mute); margin-left: 4px; }
+
+/* guide + team */
+.cols { display: grid; gap: 24px; grid-template-columns: 1fr 1fr; align-items: start; }
+.seg { display: inline-flex; border: 1px solid #3A424D; border-radius: 4px; margin-bottom: 16px; overflow: hidden; }
+.seg button { border: 0; padding: 8px 24px; font-weight: 500; background: transparent; }
+.seg button[aria-pressed="true"] { background: var(--ember); color: var(--on-ember); font-weight: 600; }
+.st { list-style: none; margin: 0; display: grid; gap: 18px; counter-reset: s; }
+.st li { counter-increment: s; display: flex; gap: 14px; }
+.st li::before { content: counter(s); flex: none; width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid var(--ember); color: var(--ember); border-radius: 4px; font: 700 1.2rem var(--f-display); }
+.st b { display: block; }
+.st span { color: var(--mute); }
+.cmd { display: flex; gap: 14px; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--line); }
+.cmd .cm { min-width: 116px; text-align: left; }
+.cmd span { color: var(--mute); font-size: .98rem; }
+.guide-h { font-size: 2rem; margin: 52px 0 16px; }
+.rules { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.rules li { padding: 14px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; }
+.rules b { display: block; }
+.rules span { color: var(--mute); font-size: .98rem; }
+details { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 14px 18px; margin-bottom: 8px; }
+summary { cursor: pointer; font-weight: 600; list-style: none; display: flex; gap: 10px; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: "+"; margin-left: auto; color: var(--ember); font-size: 1.4rem; line-height: 1; }
+details[open] summary::after { content: "–"; }
+details p { color: var(--mute); margin-top: 8px; }
+.two { display: grid; gap: 14px; grid-template-columns: 1fr 1fr; }
+label.f { display: grid; gap: 6px; margin-bottom: 14px; font-weight: 500; font-size: .98rem; }
+.err { color: var(--bad); min-height: 1.5em; margin-bottom: 8px; font-weight: 500; }
+pre { margin: 0 0 14px; padding: 14px; white-space: pre-wrap; overflow-wrap: anywhere; font: 400 .92rem var(--f-mono); background: var(--bg); border: 1px solid var(--line); border-radius: 4px; }
+@media (max-width: 860px) { .cols, .two { grid-template-columns: 1fr; } }
+
+footer { background: var(--bg2); border-top: 1px solid var(--line); padding-block: 34px 46px; color: var(--mute); font-size: .92rem; }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 16px 40px; justify-content: space-between; }
+footer b { color: var(--ink); font: 700 1.3rem var(--f-display); }
+
+/* cart drawer, toast */
+.dbg { position: fixed; inset: 0; background: rgba(0, 0, 0, .65); z-index: 90; display: none; }
+.dbg.open { display: block; }
+.drw.open { transform: none; visibility: visible; transition: transform .25s; }
+.drw { position: fixed; top: 0; right: 0; bottom: 0; width: min(420px, 88vw); z-index: 91; display: flex; transform: translateX(105%); visibility: hidden; transition: transform .25s, visibility 0s .25s; flex-direction: column; gap: 12px; background: var(--surface); border-left: 1px solid var(--line); padding: calc(20px + env(safe-area-inset-top, 0px)) calc(20px + env(safe-area-inset-right, 0px)) calc(20px + env(safe-area-inset-bottom, 0px)) 20px; }
+.drw-h { display: flex; justify-content: space-between; align-items: center; }
+.drw-h h2 { font-size: 2rem; }
+.ls { flex: 1; overflow: auto; }
+.ln { display: flex; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.ln .nm { flex: 1; min-width: 0; font-weight: 500; line-height: 1.3; }
+.ln small { display: block; font-weight: 400; color: var(--mute); }
+.qt { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.qt button { width: 30px; height: 30px; background: var(--bg); border: 1px solid #3A424D; border-radius: 4px; }
+.tot { display: flex; justify-content: space-between; font: 700 2rem var(--f-display); }
+.small { font-size: .9rem; color: var(--mute); }
+.toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 30px); max-width: calc(100% - 32px); padding: 10px 20px; background: var(--ink); color: var(--bg); border-radius: 4px; font-weight: 500; opacity: 0; pointer-events: none; transition: .2s; z-index: 99; }
+.toast.on { opacity: 1; transform: translate(-50%, 0); }
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+  html { scroll-behavior: auto; }
+}
+</style>
+
+<header class="top" id="top">
+  <div class="wrap bar">
+    <a class="brand" href="#top" aria-label="McBomba pradžia">
+      <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><circle cx="14" cy="19" r="10" fill="#FF5B1F"/><path d="M20 9l4-4" stroke="#EDEFF2" stroke-width="2.5" stroke-linecap="round"/><path d="M26 2v5M23.5 4.5h5" stroke="#FFB020" stroke-width="2" stroke-linecap="round"/></svg>
+      <span>McBomba</span>
+    </a>
+    <nav class="nav" aria-label="Pagrindinis meniu">
+      <a href="#modes">Režimai</a><a href="#ranks">Rangai</a><a href="#services">Paslaugos</a><a href="#community">Bendruomenė</a><a href="#guide">Gidas</a><a href="#team">Komanda</a>
+    </nav>
+    <div class="acts">
+      <button class="btn ghost sm" type="button" data-copy="play.mcbomba.lt" aria-label="Kopijuoti serverio adresą">play.mcbomba.lt</button>
+      <button class="btn sm" id="cartBtn" type="button">Krepšelis <span class="count" id="cn">0</span></button>
+    </div>
+  </div>
+  <div class="fuse" aria-hidden="true"><i id="fz"></i></div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <h1>Lietuviškas Minecraft serveris</h1>
+        <p class="lead">Survival, Skyblock ir Creative vienoje vietoje. Rangai ir paslaugos už Žetonus, aktyvi komanda ir bendruomenė Discord.</p>
+        <div class="cta"><a class="btn" href="#guide">Kaip prisijungti</a><a class="btn ghost" href="#ranks">Rangai ir paslaugos</a></div>
+      </div>
+      <aside class="card panel" aria-labelledby="panelH">
+        <h2 id="panelH">Prisijungimas</h2>
+        <dl>
+          <div class="r"><dt>Adresas</dt><dd><code>play.mcbomba.lt</code><button class="btn ghost sm" type="button" data-copy="play.mcbomba.lt">Kopijuoti</button></dd></div>
+          <div class="r"><dt>Java</dt><dd>Versija 1.21.11</dd></div>
+          <div class="r"><dt>Bedrock</dt><dd>Tas pats adresas, prievadas 19132</dd></div>
+          <div class="r"><dt>Režimai</dt><dd>Survival, Skyblock, Creative</dd></div>
+        </dl>
+        <div class="ev">
+          <h3 id="evN">Sezono startas</h3>
+          <div class="cd" id="cd" role="timer"></div>
+          <p class="small" id="evS"></p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="sec" id="modes">
+    <div class="wrap">
+      <h2 class="h2">Žaidimo režimai</h2>
+      <p class="sub">Tarp režimų keliauji viena komanda, o daiktai ir Žetonai lieka tavo. Spausk komandą, kad ją nukopijuotum.</p>
+      <div class="modes" id="modesGrid"></div>
+    </div>
+  </section>
+
+  <section class="sec alt" id="ranks">
+    <div class="wrap">
+      <h2 class="h2">Rangai</h2>
+      <p class="sub">Penki rangai nuo Šaulio iki Valdovo. Kaina nurodyta eurais ir Žetonais, 100 Žetonų kainuoja 0,30 €.</p>
+      <div class="ranks" id="ranksGrid"></div>
+      <ol class="how">
+        <li><span><b>Pasirink prekes</b><span class="mute">Rangą, paslaugą ar Žetonus įdėk į krepšelį.</span></span></li>
+        <li><span><b>Nukopijuok užsakymą</b><span class="mute">Krepšelyje įrašyk žaidimo vardą.</span></span></li>
+        <li><span><b>Įklijuok į Discord</b><span class="mute">Bilietas kanale #pagalba.</span></span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="sec" id="services">
+    <div class="wrap">
+      <h2 class="h2">Paslaugos</h2>
+      <p class="sub">Papildomos paslaugos paskyrai ir statyboms. Kaina nurodyta eurais ir Žetonais.</p>
+      <div class="card svc-list" id="svcList"></div>
+      <h3 class="h3" id="tokens">Žetonai</h3>
+      <p class="sub" style="margin-bottom:20px">Žetonai skirti rangams ir paslaugoms. 100 Žetonų kainuoja 0,30 €.</p>
+      <div class="packs" id="packs"></div>
+    </div>
+  </section>
+
+  <section class="sec alt" id="community">
+    <div class="wrap">
+      <h2 class="h2">Bendruomenė</h2>
+      <p class="sub">Naujienos, geriausi žaidėjai ir Discord, kuriame gimsta serverio idėjos.</p>
+      <div class="news" id="news"></div>
+      <div class="discord">
+        <div><h3>Discord serveris</h3><p>Idėjos gimsta Discord, o geriausios atsiduria serveryje. Ten gauni pagalbą ir randi su kuo statyti.</p></div>
+        <div class="row"><a class="btn" href="https://discord.gg/mcbomba" target="_blank" rel="noopener">Atidaryti Discord</a><button class="btn ghost" type="button" data-copy="discord.gg/mcbomba">Kopijuoti nuorodą</button></div>
+      </div>
+      <h3 class="h3" id="tops">Geriausi žaidėjai</h3>
+      <p class="demo">Demonstraciniai duomenys. Pakeisk juos masyve CONFIG.tops failo apačioje.</p>
+      <div class="tabs" id="ttabs"></div>
+      <div class="card" style="padding:4px 0" id="rows"></div>
+    </div>
+  </section>
+
+  <section class="sec" id="guide">
+    <div class="wrap">
+      <h2 class="h2">Gidas naujokams</h2>
+      <p class="sub">Prisijungimo žingsniai, komandos, taisyklės ir atsakymai į dažniausius klausimus.</p>
+      <div class="cols">
+        <div>
+          <div class="seg" id="seg"><button type="button" data-plat="java" aria-pressed="true">Java</button><button type="button" data-plat="bedrock" aria-pressed="false">Bedrock</button></div>
+          <ol class="st card" id="jst"></ol>
+        </div>
+        <div class="card"><h3 style="font-size:1.6rem;margin-bottom:10px">Komandos</h3><input class="in" id="cs" type="search" placeholder="Ieškoti komandos" aria-label="Ieškoti komandos" style="margin-bottom:8px"><div id="cl"></div></div>
+      </div>
+      <h3 class="guide-h">Taisyklės</h3>
+      <ul class="rules" id="rules"></ul>
+      <h3 class="guide-h">Dažni klausimai</h3>
+      <div id="faq"></div>
+    </div>
+  </section>
+
+  <section class="sec alt" id="team">
+    <div class="wrap">
+      <h2 class="h2">Prisijunk prie komandos</h2>
+      <p class="sub">Ieškome moderatorių, statybininkų ir pagalbininkų. Užpildyk anketą, nukopijuok ją ir atsiųsk Discord kanale #atranka.</p>
+      <div class="cols">
+        <div class="card">
+          <div class="two">
+            <label class="f" for="t-n">Žaidimo vardas<input class="in" id="t-n" maxlength="16" placeholder="pvz. Bombonas"></label>
+            <label class="f" for="t-a">Amžius<input class="in" id="t-a" type="number" min="10" max="99" placeholder="16"></label>
+          </div>
+          <label class="f" for="t-r">Pozicija<select class="in" id="t-r"><option>Moderatorius</option><option>Statybininkas</option><option>Pagalbininkas</option></select></label>
+          <label class="f" for="t-w">Kodėl tu?<textarea class="in" id="t-w" rows="5" maxlength="600" placeholder="Papasakok apie save, patirtį ir kiek laiko gali skirti"></textarea></label>
+          <div class="err" id="t-e" role="alert"></div>
+          <button class="btn" id="t-go" type="button">Kopijuoti anketą</button>
+        </div>
+        <div class="card"><h3 style="font-size:1.6rem;margin-bottom:10px">Peržiūra</h3><pre id="t-p">Anketa atsiras čia.</pre><a class="btn ghost sm" href="https://discord.gg/mcbomba" target="_blank" rel="noopener">Atidaryti Discord</a></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div><b>McBomba</b><br>play.mcbomba.lt</div>
+    <div>© McBomba. Nėra susijęs su Mojang Studios ar Microsoft. Minecraft yra Mojang Studios prekės ženklas.</div>
+  </div>
+</footer>
+
+<div class="dbg" id="dbg"></div>
+<aside class="drw" id="drw" role="dialog" aria-modal="true" aria-label="Krepšelis" aria-hidden="true">
+  <div class="drw-h"><h2>Krepšelis</h2><button class="btn ghost sm" id="dx" type="button">Uždaryti krepšelį</button></div>
+  <div class="ls" id="ls"></div>
+  <div id="df">
+    <div class="tot"><span>Iš viso</span><span id="sum">0,00 €</span></div>
+    <input class="in" id="nick" maxlength="16" placeholder="Tavo žaidimo vardas" style="margin:12px 0" aria-label="Žaidimo vardas">
+    <button class="btn full" id="ord" type="button">Kopijuoti užsakymą</button>
+    <p class="small" style="margin-top:10px">Užsakymą įklijuok į bilietą Discord kanale #pagalba. Žetonai bus įrašyti į paskyrą (/zetonai).</p>
+  </div>
+</aside>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function () {
+  'use strict';
+  /* ========= NUSTATYMAI: keisk čia ========= */
+  var CONFIG = {
+    ip: 'play.mcbomba.lt',
+    event: { name: 'Sezono startas', date: '2026-11-14T19:00:00+02:00', sub: 'Prisijunk per play.mcbomba.lt ir pasikviesk draugus.' },
+    news: [
+      { d: '2026-10-31', t: 'Nauja McBomba svetainė', p: 'Rangai, paslaugos, gidas, topai ir atranka į komandą dabar vienoje vietoje.' },
+      { d: '2026-10-31', t: 'Žetonų parduotuvė atidaryta', p: '100 Žetonų kainuoja 0,30 €. Rangus ir paslaugas gali nusipirkti per krepšelį.' },
+      { d: '2026-10-31', t: 'Ieškome komandos', p: 'Moderatoriai, statybininkai ir pagalbininkai: pildyk anketą skiltyje „Komanda“.' }
+    ],
+    tops: { /* DEMO duomenys, pakeisk tikrais */
+      'Laikas': { u: 'val.', l: [['BombaMeistras', 412], ['TNT_Ninja', 388], ['Fitilis', 351], ['SpyrusKiskis', 297], ['AkmensKirtis', 266], ['Dinamitas', 240], ['MaisToBomba', 215], ['KasyklosKaralius', 198]] },
+      'Žetonai': { u: 'Žet.', l: [['Fitilis', 18200], ['Dinamitas', 15400], ['BombaMeistras', 12900], ['TNT_Ninja', 9800], ['AkmensKirtis', 7600], ['SpyrusKiskis', 5100], ['MaisToBomba', 3300], ['KasyklosKaralius', 2100]] },
+      'Sprogimai': { u: 'sprogimų', l: [['TNT_Ninja', 1840], ['Dinamitas', 1522], ['BombaMeistras', 1290], ['Fitilis', 988], ['MaisToBomba', 760], ['SpyrusKiskis', 640], ['AkmensKirtis', 420], ['KasyklosKaralius', 310]] }
+    }
+  };
+
+  /* ========= pagalbinės ========= */
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var nf = new Intl.NumberFormat('lt-LT');
+  var ef = new Intl.NumberFormat('lt-LT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  var eur = function (t) { return ef.format(t * 3 / 1000) + ' €'; };
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function load(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }
+  function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  var toastT;
+  function say(m) { var t = $('#toast'); t.textContent = m; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(function () { t.classList.remove('on'); }, 2400); }
+  function copy(text, ok) {
+    function done() { say(ok || ('Nukopijuota: ' + text)); }
+    function fallback() {
+      var a = document.createElement('textarea'); a.value = text; a.setAttribute('readonly', ''); a.style.cssText = 'position:fixed;left:-9999px;top:0';
+      document.body.appendChild(a); a.select(); var r = false;
+      try { r = document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(a);
+      if (r) done(); else say('Nepavyko nukopijuoti. Pažymėk tekstą ranka.');
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) { try { navigator.clipboard.writeText(text).then(done, fallback); } catch (e) { fallback(); } } else fallback();
+  }
+  document.addEventListener('click', function (e) { var b = e.target.closest('[data-copy]'); if (b) copy(b.getAttribute('data-copy')); });
+  function chip(c) { return '<button class="cm" type="button" data-copy="' + esc(c) + '">' + esc(c) + '</button>'; }
+
+  /* ========= slinkimo juosta ========= */
+  function fuse() { var d = document.documentElement, p = Math.min(1, window.scrollY / ((d.scrollHeight - innerHeight) || 1)); $('#fz').style.width = (p * 100) + '%'; }
+  addEventListener('scroll', fuse, { passive: true }); addEventListener('resize', fuse); fuse();
+
+  /* ========= atgalinis skaičiavimas ========= */
+  $('#evN').textContent = CONFIG.event.name; $('#evS').textContent = CONFIG.event.sub;
+  var cd = $('#cd');
+  cd.innerHTML = ['dienos', 'val.', 'min.', 'sek.'].map(function (u) { return '<div class="cd-t"><b>--</b><span>' + u + '</span></div>'; }).join('');
+  var pad = function (v) { return v < 10 ? '0' + v : String(v); };
+  var ti;
+  function tick() {
+    var ms = new Date(CONFIG.event.date).getTime() - Date.now();
+    if (isNaN(ms)) return;
+    if (ms <= 0) { cd.innerHTML = '<div class="cd-done">Sezonas prasidėjo</div>'; clearInterval(ti); return; }
+    var v = [Math.floor(ms / 864e5), Math.floor(ms / 36e5) % 24, Math.floor(ms / 6e4) % 60, Math.floor(ms / 1e3) % 60];
+    $$('.cd-t b', cd).forEach(function (b, i) { b.textContent = pad(v[i]); });
+  }
+  tick(); ti = setInterval(tick, 1000);
+
+  /* ========= režimai ir naujienos ========= */
+  var MODES = [
+    ['Survival', 'Išgyvenimas su ekonomika, parduotuvėmis ir miestų statyba. Pasižymėk žemę, kad niekas nesugriautų tavo namų.', ['/sethome', '/shop', '/claim']],
+    ['Skyblock', 'Pradedi ant mažos salos su vienu medžiu. Plėsk salą, atrakink užduotis ir lenktyniauk reitinge.', ['/is', '/is top', '/is team']],
+    ['Creative', 'Nuosavas sklypas ir visi blokai po ranka. Statyk be ribų, o geriausius darbus rodome Discord kanale.', ['/plot auto', '/plot visit', 'WorldEdit']]
+  ];
+  $('#modesGrid').innerHTML = MODES.map(function (m) {
+    return '<article class="card mode"><h3>' + m[0] + '</h3><p>' + m[1] + '</p><div class="chips">' + m[2].map(chip).join('') + '</div></article>';
+  }).join('');
+  $('#news').innerHTML = CONFIG.news.map(function (n) {
+    return '<article class="card nw"><time datetime="' + n.d + '">' + n.d.replace(/-/g, '.') + '</time><h3>' + n.t + '</h3><p>' + n.p + '</p></article>';
+  }).join('');
+
+  /* ========= parduotuvė ========= */
+  var TIERS = { wood: ['Mediena', '#C49A63'], stone: ['Akmuo', '#9AA2AB'], iron: ['Geležis', '#D9DEE4'], gold: ['Auksas', '#F2C230'], diamond: ['Deimantas', '#3ED8CC'] };
+  var ITEMS = [
+    { id: 'p100', cat: 'tok', n: '100 Žetonų', tok: 100, add: 100, lore: 'Greitas starto paketas.' },
+    { id: 'p500', cat: 'tok', n: '500 Žetonų', tok: 500, add: 500, lore: 'Smulkioms pirkinėms.' },
+    { id: 'p1000', cat: 'tok', n: '1 000 Žetonų', tok: 1000, add: 1000, lore: 'Populiariausias pasirinkimas.' },
+    { id: 'p5000', cat: 'tok', n: '5 000 Žetonų', tok: 5000, add: 5000, lore: 'Didelis paketas rangams ir paslaugoms.' },
+    { id: 'r1', cat: 'rank', n: 'Šaulys', tok: 10000, tier: 'wood', perks: ['Spalvotas prefiksas', '2 /home taškai', 'Kasdienis rinkinys /kit saulys'] },
+    { id: 'r2', cat: 'rank', n: 'Riteris', tok: 15000, tier: 'stone', perks: ['4 /home taškai', 'Komanda /hat', '1 claim sklypas'] },
+    { id: 'r3', cat: 'rank', n: 'Karys', tok: 20000, tier: 'iron', perks: ['6 /home taškai', 'Komanda /nick', '2 claim sklypai', 'Dalelių efektas'] },
+    { id: 'r4', cat: 'rank', n: 'Raitelis', tok: 25000, tier: 'gold', perks: ['/fly savo claim sklype', 'Privatus Creative sklypas', 'Savaitinis rinkinys'] },
+    { id: 'r5', cat: 'rank', n: 'Valdovas', tok: 30000, tier: 'diamond', perks: ['Gradientinis prefiksas', 'Šlovės siena', 'Prioritetinė pagalba'] },
+    { id: 's1', cat: 'svc', n: 'Žaidėjo atblokavimas', tok: 8000, lore: 'Atblokuoja tavo paskyrą (unban).' },
+    { id: 's2', cat: 'svc', n: 'Papildomas claim sklypas', tok: 2000, lore: 'Daugiau apsaugotos žemės statyboms.' },
+    { id: 's3', cat: 'svc', n: 'Pervadinimo kuponas', tok: 3000, lore: 'Pakeisk savo žaidimo vardą.' },
+    { id: 's4', cat: 'svc', n: 'Dalelių efektas', tok: 4000, lore: 'Efektas aplink tavo personažą žaidime.' }
+  ];
+  var find = function (id) { return ITEMS.filter(function (x) { return x.id === id; })[0]; };
+  var of = function (cat) { return ITEMS.filter(function (i) { return i.cat === cat; }); };
+  var priceHtml = function (i) { return '<div class="price">' + eur(i.tok) + '<small>' + nf.format(i.tok) + ' Žetonų</small></div>'; };
+  var addBtn = function (id, cls) { return '<button class="btn ' + (cls || '') + '" type="button" data-add="' + id + '">Į krepšelį</button>'; };
+
+  $('#ranksGrid').innerHTML = of('rank').map(function (i) {
+    var T = TIERS[i.tier];
+    return '<article class="card rank" style="--tc:' + T[1] + '"><div class="tier"><i></i>' + T[0] + '</div><h3>' + i.n + '</h3>' + priceHtml(i) + '<ul class="perks">' + i.perks.map(function (p) { return '<li>' + p + '</li>'; }).join('') + '</ul>' + addBtn(i.id, 'full') + '</article>';
+  }).join('');
+  $('#svcList').innerHTML = of('svc').map(function (i) {
+    return '<div class="svc"><div><h3>' + i.n + '</h3><p>' + i.lore + '</p></div>' + priceHtml(i) + addBtn(i.id, 'sm') + '</div>';
+  }).join('');
+  $('#packs').innerHTML = of('tok').map(function (i) {
+    return '<article class="card pack"><h4>' + i.n + '</h4><p>' + i.lore + '</p><div class="price">' + eur(i.tok) + '</div>' + addBtn(i.id, 'sm') + '</article>';
+  }).join('') + '<article class="card pack"><h4>Savo kiekis</h4><p>Nuo 100 Žetonų, žingsnis 100.</p><div class="cu"><input class="in" id="cust" type="number" min="100" step="100" value="1000" aria-label="Žetonų kiekis"><button class="btn sm" type="button" data-cust="1">Pridėti</button></div></article>';
+
+  var cart = load('mcb_cart6') || { tok: 0, items: {} };
+  if (typeof cart.tok !== 'number' || !cart.items) cart = { tok: 0, items: {} };
+  function total() { return Object.keys(cart.items).reduce(function (a, id) { return a + find(id).tok * cart.items[id]; }, cart.tok); }
+  function drawCart() {
+    var h = '', n = cart.tok ? 1 : 0;
+    if (cart.tok) h += '<div class="ln"><div class="nm">Žetonai<small>' + nf.format(cart.tok) + ' vnt.</small></div><b>' + eur(cart.tok) + '</b><button class="btn ghost sm" type="button" data-crm="1" aria-label="Pašalinti Žetonus">Šalinti</button></div>';
+    Object.keys(cart.items).forEach(function (id) {
+      var it = find(id), q = cart.items[id]; n += q;
+      h += '<div class="ln"><div class="nm">' + it.n + '<small>' + eur(it.tok) + ' / vnt.</small></div><div class="qt"><button type="button" data-cm="' + id + '" aria-label="Mažiau">−</button>' + q + '<button type="button" data-cp="' + id + '" aria-label="Daugiau">+</button></div></div>';
+    });
+    $('#ls').innerHTML = h || '<p class="mute" style="margin-top:20px">Krepšelis tuščias. Užsuk į <a href="#ranks" data-closecart="1">rangus</a> arba <a href="#services" data-closecart="1">paslaugas</a>.</p>';
+    $('#df').hidden = !h; $('#cn').textContent = n; $('#sum').textContent = eur(total()); save('mcb_cart6', cart);
+  }
+  function addTok(n) { cart.tok += n; drawCart(); say('Krepšelyje +' + nf.format(n) + ' Žetonų'); }
+  function add(id) { var it = find(id); if (it.add) return addTok(it.add); cart.items[id] = (cart.items[id] || 0) + 1; drawCart(); say('Pridėta: ' + it.n); }
+  document.addEventListener('click', function (e) {
+    var t = e.target, b;
+    if ((b = t.closest('[data-add]'))) add(b.getAttribute('data-add'));
+    else if (t.closest('[data-cust]')) { var v = Math.round((+$('#cust').value || 0) / 100) * 100; if (v < 100) say('Minimalus kiekis yra 100 Žetonų'); else addTok(Math.min(v, 1000000)); }
+  });
+  $('#ls').addEventListener('click', function (e) {
+    var t = e.target, m = t.closest('[data-cm]'), p = t.closest('[data-cp]');
+    if (t.closest('[data-closecart]')) closeCart();
+    if (t.closest('[data-crm]')) cart.tok = 0;
+    if (m) { var i = m.getAttribute('data-cm'); if (--cart.items[i] < 1) delete cart.items[i]; }
+    if (p) cart.items[p.getAttribute('data-cp')]++;
+    drawCart();
+  });
+  function openCart() { var d = $('#drw'); $('#dbg').classList.add('open'); d.classList.add('open'); d.setAttribute('aria-hidden', 'false'); $('#dx').focus(); }
+  function closeCart() { var d = $('#drw'); if (!d.classList.contains('open')) return; d.classList.remove('open'); d.setAttribute('aria-hidden', 'true'); $('#dbg').classList.remove('open'); $('#cartBtn').focus(); }
+  $('#cartBtn').addEventListener('click', openCart); $('#dx').addEventListener('click', closeCart); $('#dbg').addEventListener('click', closeCart);
+  addEventListener('keydown', function (e) { if (e.key === 'Escape') closeCart(); });
+  $('#ord').addEventListener('click', function () {
+    var nick = $('#nick').value.trim();
+    if (!nick) { say('Įrašyk savo žaidimo vardą'); $('#nick').focus(); return; }
+    var rows = []; if (cart.tok) rows.push('- Žetonai: ' + nf.format(cart.tok) + ' – ' + eur(cart.tok));
+    Object.keys(cart.items).forEach(function (id) { var it = find(id), q = cart.items[id]; rows.push('- ' + it.n + (q > 1 ? ' ×' + q : '') + ' – ' + eur(it.tok * q)); });
+    copy('Užsakymas McBomba:\n' + rows.join('\n') + '\nIš viso: ' + eur(total()) + '\nŽaidimo vardas: ' + nick, 'Užsakymas nukopijuotas. Įklijuok jį Discord bilete');
+  });
+
+  /* ========= topai ========= */
+  var tkeys = Object.keys(CONFIG.tops), tcur = tkeys[0];
+  $('#ttabs').innerHTML = tkeys.map(function (k) { return '<button class="tab" type="button" data-k="' + k + '" aria-pressed="false">' + k + '</button>'; }).join('');
+  function drawTops() {
+    $$('#ttabs .tab').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-k') === tcur ? 'true' : 'false'); });
+    var T = CONFIG.tops[tcur];
+    $('#rows').innerHTML = T.l.map(function (r, i) {
+      return '<div class="top-row"><span class="no">' + (i + 1) + '</span><b>' + esc(r[0]) + '</b><span class="val">' + nf.format(r[1]) + '<small>' + T.u + '</small></span></div>';
+    }).join('');
+  }
+  $('#ttabs').addEventListener('click', function (e) { var b = e.target.closest('[data-k]'); if (b) { tcur = b.getAttribute('data-k'); drawTops(); } });
+
+  /* ========= gidas ========= */
+  var JOIN = {
+    java: [['Paleisk Minecraft Java', 'Pasirink versiją 1.21.11.'], ['Eik į „Multiplayer“', 'Spausk „Add Server“ (pridėti serverį).'], ['Įrašyk adresą', 'Laukelyje „Server Address“ įvesk ' + CONFIG.ip + ' ir spausk „Done“.'], ['Prisijunk ir pasirink režimą', 'Spawn zonoje paspausk kompasą ir išsirink norimą režimą.']],
+    bedrock: [['Atidaryk Minecraft', 'Telefone, planšetėje ar konsolėje.'], ['Servers, tada Add Server', 'Skirtuke „Servers“ spausk „Add Server“.'], ['Adresas ir prievadas', 'Adresas ' + CONFIG.ip + ', prievadas (port) 19132.'], ['Žaisk', 'Spawn zonoje paspausk kompasą ir išsirink režimą.']]
+  };
+  function showJoin(p) {
+    $$('#seg button').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-plat') === p ? 'true' : 'false'); });
+    $('#jst').innerHTML = JOIN[p].map(function (s) { return '<li><div><b>' + s[0] + '</b><span>' + s[1] + '</span></div></li>'; }).join('');
+  }
+  $('#seg').addEventListener('click', function (e) { var b = e.target.closest('[data-plat]'); if (b) showJoin(b.getAttribute('data-plat')); });
+  showJoin('java');
+  var CMDS = [['/sethome', 'Nustato namų tašką'], ['/home', 'Nuteleportuoja į namus'], ['/claim', 'Pasižymi žemę apsaugai'], ['/shop', 'Atidaro serverio parduotuvę'], ['/zetonai', 'Parodo Žetonų balansą'], ['/is', 'Skyblock sala'], ['/is top', 'Skyblock reitingas'], ['/is team', 'Salos komanda'], ['/plot auto', 'Gauni sklypą Creative režime'], ['/plot visit', 'Aplankai kito žaidėjo sklypą'], ['/kit saulys', 'Kasdienis Šaulio rinkinys'], ['/hat', 'Užsidedi daiktą ant galvos (Riteris+)'], ['/nick', 'Pakeiti rodomą vardą (Karys+)'], ['/fly', 'Skraidyk savo claim sklype (Raitelis+)']];
+  function drawCmds(q) {
+    $('#cl').innerHTML = CMDS.filter(function (c) { return (c[0] + ' ' + c[1]).toLowerCase().indexOf(q) > -1; }).map(function (c) {
+      return '<div class="cmd">' + chip(c[0]) + '<span>' + c[1] + '</span></div>';
+    }).join('') || '<p class="mute">Nieko nerasta.</p>';
+  }
+  $('#cs').addEventListener('input', function (e) { drawCmds(e.target.value.trim().toLowerCase()); }); drawCmds('');
+  var RULES = [['Gerbk kitus žaidėjus', 'Jokių įžeidinėjimų, patyčių ar nešvankių pokalbių.'], ['Jokių sukčiavimo programų', 'X-Ray, fly hack, auto-clicker ir panašios modifikacijos draudžiamos.'], ['Negriauk svetimų statinių', 'Griefing baudžiamas blokavimu. Savo žemę žymėk per /claim.'], ['Be reklamos', 'Kitų serverių ir svetainių reklama pokalbyje draudžiama.'], ['Nenaudok klaidų savo naudai', 'Radai klaidą? Pranešk Discord kanale #klaidos.'], ['Viena paskyra', 'Papildomos paskyros Žetonų ar daiktų perdavimui neleidžiamos.']];
+  $('#rules').innerHTML = RULES.map(function (r) { return '<li><b>' + r[0] + '</b><span>' + r[1] + '</span></li>'; }).join('');
+  var FAQ = [['Kaip veikia Žetonai?', '100 Žetonų kainuoja 0,30 €. Užsakymą atidarai per Discord bilietą #pagalba, o Žetonai įrašomi į tavo paskyrą. Balansą matai komanda /zetonai.'], ['Kaip nusipirkti rangą?', 'Įdėk rangą į krepšelį, įrašyk žaidimo vardą, nukopijuok užsakymą ir įklijuok jį į bilietą Discord kanale #pagalba.'], ['Ar veikia Bedrock?', 'Taip. Adresas tas pats, prievadas (port) 19132.'], ['Kur gauti pagalbą?', 'Discord serveryje atidaryk bilietą kanale #pagalba.']];
+  $('#faq').innerHTML = FAQ.map(function (f) { return '<details><summary>' + f[0] + '</summary><p>' + f[1] + '</p></details>'; }).join('');
+
+  /* ========= atranka ========= */
+  function app() {
+    var n = $('#t-n').value.trim(), a = $('#t-a').value, r = $('#t-r').value, w = $('#t-w').value.trim();
+    return { n: n, a: a, r: r, w: w, txt: 'Atranka į McBomba komandą\nVardas: ' + n + '\nAmžius: ' + a + '\nPozicija: ' + r + '\nApie mane: ' + w };
+  }
+  ['#t-n', '#t-a', '#t-r', '#t-w'].forEach(function (s) { $(s).addEventListener('input', function () { $('#t-p').textContent = app().txt; }); });
+  $('#t-go').addEventListener('click', function () {
+    var x = app(), e = x.n.length < 3 ? 'Įrašyk žaidimo vardą (bent 3 simboliai).' : (!x.a || +x.a < 10) ? 'Įrašyk amžių.' : x.w.length < 30 ? 'Papasakok daugiau apie save (bent 30 simbolių).' : '';
+    $('#t-e').textContent = e;
+    if (!e) copy(x.txt, 'Anketa nukopijuota. Įklijuok ją Discord kanale #atranka');
+  });
+
+  drawCart(); drawTops();
+})();
+</script>
